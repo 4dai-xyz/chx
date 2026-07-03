@@ -1,0 +1,74 @@
+%YAML:1.0
+# Industrial USB Camera Calibration (scaled to 960x540 from 1920x1080)
+# Auto-generated from config/KannalaBrandt8.yaml
+Initializer.initialization: 1
+
+#---------------------------------------------
+# Camera parameters (OpenCV PinHole)
+#---------------------------------------------
+Camera.type: "PinHole"
+Camera.fx: 571.2574
+Camera.fy: 604.4786
+Camera.cx: 497.8600
+Camera.cy: 249.7015
+Camera.k1: 0.298296
+Camera.k2: -0.863055
+Camera.k3: 1.041614
+Camera.p1: 0.020866
+Camera.p2: 0.002167
+
+Camera.width: 960
+Camera.height: 540
+
+# Camera FPS
+Camera.fps: 30.0
+
+# Color / grayscale
+Camera.RGB: 1
+
+#---------------------------------------------
+# ORB feature parameters
+#---------------------------------------------
+ORBextractor.nFeatures: 2000
+ORBextractor.scaleFactor: 1.2
+ORBextractor.nLevels: 8
+ORBextractor.iniThFAST: 5
+ORBextractor.minThFAST: 2
+
+#---------------------------------------------
+# Tracking parameters
+#---------------------------------------------
+Tracker.kfDist: 0.02
+Tracker.kfDistLC: 0.05
+Tracker.kfDistLC2: 0.02
+Tracker.monoFOV: 20
+Tracker.monoSigma: 0.04
+Tracker.monoMinConf: 0.3
+Tracker.monoMaxFrames: 30
+
+#---------------------------------------------
+# Optimization parameters
+#---------------------------------------------
+Optimizer.numIterations: 5
+Optimizer.numIterationsIni: 5
+Optimizer.numIterationsBA: 5
+
+#---------------------------------------------
+# Local mapping parameters
+#---------------------------------------------
+LocalMapping.nFeatures: 2000
+LocalMapping.scaleFactor: 1.2
+LocalMapping.nLevels: 8
+
+# Viewer parameters
+#---------------------------------------------
+Viewer.KeyFrameSize: 0.05
+Viewer.KeyFrameLineWidth: 1
+Viewer.GraphLineWidth: 0.9
+Viewer.PointSize: 2
+Viewer.CameraSize: 0.08
+Viewer.CameraLineWidth: 3
+Viewer.ViewpointX: 0
+Viewer.ViewpointY: -0.7
+Viewer.ViewpointZ: -1.8
+Viewer.ViewpointF: 500

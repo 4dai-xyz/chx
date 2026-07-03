@@ -1,0 +1,131 @@
+input:
+  video: "resources/input_video.mp4"
+  calib: "config/KannalaBrandt8_1280x720.yaml"
+  pose_tum: "output/route_A/trajectory_flat.txt"          # V1 平面化后的 DPVO 轨迹
+  pointcloud_npy: "output/route_A/pointcloud_vggt.npy"    # V1 过滤后 VGGT 点云
+  ground_plane_json: "output/route_A/ground_plane_final.json"
+  v1_meta_json: "output/route_A/static_map_meta.json"     # 只借用 R_align / origin / resolution 默认
+  semantic_mask_video: "resources/input_video.mp4_bev.mp4"
+
+pose:
+  timestamp_unit: "dpvo_tick"
+  dpvo_stride: 2
+  scale: 1.0
+  pose_is_twc: true
+
+people:
+  model: "yolo11n-seg.pt"
+  fallback_model: "yolov8n-seg.pt"
+  tracker: "botsort.yaml"
+  fallback_tracker: "bytetrack.yaml"
+  conf_thres: 0.35
+  iou_thres: 0.50
+  imgsz: 960
+  device: "auto"
+  person_class_id: 0
+  max_lost_frames: 15
+  mask_bottom_percent: 0.05
+  min_mask_area_px: 80
+
+filter:
+  ema_alpha: 0.35
+  max_human_speed_mps: 3.0
+  reject_large_jumps: true
+
+ground:
+  fallback_camera_height: 0.1
+  fallback_camera_pitch_deg: 15.0
+
+static_map_v2:
+  output_dir: "output/route_A_v2"
+
+  # 分辨率: V1 用 0.004 太细, V2 用 0.008~0.010 更适合"可导航地图"密度
+  resolution_candidates: [0.006, 0.008, 0.010]
+  default_resolution_unit_per_px: 0.008
+  width_px: 1200
+  height_px: 1200
+  auto_crop_to_active_area: true
+  active_area_margin_px: 120
+
+  # 障碍
+  obstacle_count_thresh_candidates: [1, 2]
+  obstacle_gaussian_sigma_candidates: [1.0, 1.5]
+  obstacle_density_percentile_candidates: [0]     # 0 = 不启用 percentile, 用 count_thresh
+  obstacle_min_component_area_px: 20
+  obstacle_close_kernel_candidates: [9, 13]
+  obstacle_dilate_kernel_candidates: [5]
+
+  # free 走廊
+  free_corridor_radius_unit_candidates: [0.20, 0.30]
+  free_frustum_enable: true
+  free_frustum_stride_frames: 15
+  free_frustum_range_unit: 0.80
+  free_frustum_half_fov_deg: 35.0
+  free_close_kernel_candidates: [15]
+  free_min_component_area_px: 100
+
+  # SAM 处理视频 (可选 floor mask)
+  use_semantic_floor_mask: true
+  semantic_stride_frames: 30
+  floor_color_mode: "yellow"
+  floor_hsv_lower: [15, 60, 60]
+  floor_hsv_upper: [45, 255, 255]
+  floor_sample_step_px: 12
+  floor_projection_max_range_unit: 1.50
+
+  # 参数搜索深度: 32 组合上限
+  max_candidates: 32
+
+  # 障碍高度带 (若 V1 meta 有则用, 否则手工)
+  obstacle_height_range: null                     # null = 从 v1_meta 里取
+  fallback_obstacle_height_range: [0.04, 0.75]
+
+  render:
+    nav_binary:
+      free: [255, 255, 255]
+      not_free: [0, 0, 0]
+    tricolor:
+      occupied: [0, 0, 0]
+      free: [255, 255, 255]
+      unknown: [160, 160, 160]
+    paper_style:
+      background: [245, 245, 245]
+      occupied: [20, 20, 20]
+      free: [255, 255, 255]
+      unknown: [220, 220, 220]
+      camera_traj: [255, 120, 0]
+      people: [0, 120, 255]
+
+  # 质量阈值 (软约束, 只作为报告标注)
+  quality_thresholds:
+    active_free_ratio_min: 0.15
+    active_unknown_ratio_max: 0.60
+    trajectory_collision_ratio_max: 0.01
+    obstacle_small_component_ratio_max: 0.35
+    largest_free_component_ratio_min: 0.50
+
+  quality_thresholds_relaxed:
+    active_free_ratio_min: 0.08
+    active_unknown_ratio_max: 0.75
+    trajectory_collision_ratio_max: 0.01
+    obstacle_small_component_ratio_max: 0.50
+    largest_free_component_ratio_min: 0.40
+
+  # 综合评分权重
+  score_weights:
+    w_free: 1.5
+    w_unknown: -0.5
+    w_collision: -3.0
+    w_small_comp: -0.8
+    w_largest_free: 1.0
+
+bev:
+  trail_length: 80
+  grid_step_m: 0.5
+  draw_camera_trail: true
+  draw_people_trails: false
+
+output:
+  dir: "output/route_A_v2"
+  live_window: false
+  save_clean_video: true

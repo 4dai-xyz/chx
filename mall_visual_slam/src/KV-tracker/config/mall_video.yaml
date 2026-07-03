@@ -1,0 +1,4 @@
+datasource: phoneLoader
+que_size: 1
+results_path: /home/ros/ros2_orbslam3/output/kv_track3r_repro
+scene_dir: /home/ros/ros2_orbslam3/resources/input_video.mp4

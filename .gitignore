@@ -1,0 +1,97 @@
+# Build outputs
+build/
+install/
+log/
+logs/
+*.log
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local environments and caches
+.venv/
+.venv-*/
+venv/
+env/
+.conda/
+.cache/
+.local/
+.runtime/
+
+# ROS / runtime state
+.ros/
+.rviz2/
+*.bag
+*.db3
+
+# Generated outputs
+output/
+outputs/
+results/
+runs/
+wandb/
+tensorboard/
+
+# Large media / datasets
+resources/*.mp4
+resources/*.avi
+resources/*.mov
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# Keep documentation images only if explicitly needed.
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.pgm
+
+# Keep small navigation map assets used by Go2 Nav2 examples.
+!go2_control/projects/go2_nav_sim/**/*.pgm
+
+# Models / point clouds / arrays
+*.pt
+*.pth
+*.onnx
+*.engine
+*.ckpt
+*.bin
+*.ply
+*.pcd
+*.npy
+*.npz
+
+# Archives and papers
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.pdf
+
+# Third-party source dumps
+project code/
+thirdparty/
+src/KV-tracker/thirdparty/
+
+# Isaac / MuJoCo / Unitree local assets
+assets_cache/
+downloads/
+opt/
+MUJOCO_LOG.TXT
+
+# IDE / agent local state
+.vscode/
+.idea/
+.codex/
+.agents/
+.claude/
+
+# Personal learning scratch folders
+C++ learn/
+Python Learn/

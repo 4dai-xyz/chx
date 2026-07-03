@@ -1,0 +1,75 @@
+video:
+  path: "resources/input_video.mp4"
+  max_frames: 0
+  frame_stride: 1
+  output_fps: 30
+
+camera:
+  calib_path: "config/KannalaBrandt8_1280x720.yaml"
+  assume_undistorted: true
+
+pose:
+  source: "tum_file"
+  tum_path: "output/dpvo/trajectory_tum.txt"
+  pose_is_twc: true
+  scale: 1.0
+  timestamp_unit: "dpvo_tick"
+  dpvo_stride: 2
+  timestamp_tolerance_sec: 0.2
+
+detector:
+  model: "yolo11n-seg.pt"
+  fallback_model: "yolov8n-seg.pt"
+  person_class_id: 0
+  conf_thres: 0.35
+  iou_thres: 0.50
+  imgsz: 960
+  device: "auto"
+
+tracker:
+  name: "botsort.yaml"
+  fallback_name: "bytetrack.yaml"
+  min_confirmed_frames: 3
+  max_lost_frames: 15
+
+footpoint:
+  mask_bottom_percent: 0.05
+  min_mask_area_px: 80
+
+ground:
+  # 第一版用「相机系地面」：假设头戴/胸戴相机相对地面是刚体，俯仰角恒定。
+  # camera_height 是相机离地面在 DPVO 单位下的距离 (单目 DPVO 没有米制，
+  # 这里靠经验值。input_video.mp4 的 mall 视频经实测 camera_height≈0.1
+  # 配合 camera_pitch_deg≈15 时投影合理)。
+  mode: "camera"
+  camera_height: 0.1
+  camera_pitch_deg: 15.0
+  # 保留 world-frame 备用 (mode 改成 "world" 时启用)。
+  normal: [0.0, 1.0, 0.0]
+  d: -0.1
+
+world:
+  bev_axes: ["x", "z"]
+
+filter:
+  ema_alpha: 0.35
+  max_human_speed_mps: 3.0
+  reject_large_jumps: true
+
+bev:
+  width_px: 1200
+  height_px: 1200
+  # 注意：单目 DPVO 没有真实米制，下面的 "m_per_px" 单位实际上是
+  # "DPVO 平移单位 / 像素"。对该 mall 视频，整条轨迹大约 3.1 DPVO 单位
+  # (实际行走 ~30-50m)。这里把 1 DPVO 单位 ~= 250px，能把整段轨迹
+  # 装进画布。
+  resolution_m_per_px: 0.004
+  origin_world: [0.0, 1.5]
+  grid_step_m: 0.5
+  trail_length: 80
+
+output:
+  dir: "output/people_bev"
+  save_debug_overlay: true
+  save_bev_video: true
+  save_json: true

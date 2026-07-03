@@ -1,0 +1,121 @@
+input:
+  video: "resources/input_video.mp4"
+  pose_tum: "output/route_A/trajectory_flat.txt"
+  calib: "config/KannalaBrandt8_1280x720.yaml"
+  person_tracks: "output/route_A_v3_scarf/people_tracks_route_A_v3.json"
+  person_tracks_fallback: "output/route_A_v2/people_tracks_route_A_v2.json"
+  semantic_mask_video: "resources/input_video.mp4_bev.mp4"
+  alignment_selected: "output/route_A_v3_scarf/alignment_selected.json"
+  aligned_static_map_meta: "output/route_A_v3_scarf/aligned_preview/static_map_meta.json"
+  ground_plane: "output/route_A/ground_plane_final.json"
+  v2_quality: "output/route_A_v2/best/quality.json"
+  v2_best_meta: "output/route_A_v2/best/static_map_meta.json"
+
+output:
+  dir: "output/route_A_v3_scarf"
+
+keyframes:
+  stride_frames: 10
+  min_translation_unit: 0.035
+  min_rotation_deg: 6.0
+  max_keyframes: 240
+  image_width: 960
+  image_height: 540
+
+depth:
+  backend_priority: ["depth_anything_v2_metric_indoor", "depth_anything_v2", "zoedepth"]
+  hf_model_metric: "depth-anything/Depth-Anything-V2-Metric-Indoor-Small-hf"
+  hf_model_relative: "depth-anything/Depth-Anything-V2-Small-hf"
+  cache_dir: "output/route_A_v3_scarf/depth_cache"
+  vis_dir: "output/route_A_v3_scarf/depth_vis"
+  min_depth_m: 0.3
+  max_depth_m: 15.0
+  use_person_mask: true
+  device: "cuda"
+
+scale:
+  mode: "ground_height_and_overlap"
+  camera_height_unit_from_v1: 0.7909    # DPVO 单位下相机离地高度 (V1 求出)
+  camera_height_meters: 1.6             # 眼镜实际高度 (用于米->DPVO 单位换算的先验)
+  scale_smooth_window: 7
+  max_scale_jump_ratio: 1.25
+  min_floor_pixels: 300
+  floor_bottom_frac: 0.25               # 图像下 45% 当 floor candidate 兜底
+  enable_pairwise_overlap_refine: false # 轻量版先关, 报告说明
+
+submap:
+  keyframes_per_submap: 12
+  overlap_keyframes: 3
+  voxel_size_unit: 0.015
+  min_observations: 2
+  depth_consistency_thresh_unit: 0.06
+  max_points_per_submap: 300000
+  depth_stride_px: 4                    # 反投影时像素下采样 (省内存)
+
+occupancy:
+  resolution_unit_per_px: 0.006
+  width_px: 1200
+  height_px: 1200
+  use_v2_origin: true
+  obstacle_height_range_unit: [0.12, 0.85]
+  floor_height_abs_thresh_unit: 0.12
+  free_from_floor_points: true
+  free_from_ray_carving: true
+  frustum_range_unit: 1.1
+  frustum_half_fov_deg: 33.0
+  obstacle_min_observations: 3
+  unknown_as_obstacle_in_binary: true
+  obstacle_close_kernel: 13
+  obstacle_dilate_kernel: 3
+  free_close_kernel: 31
+  free_dilate_kernel: 5
+  free_corridor_radius_unit: 0.35
+  obstacle_min_component_area_px: 80
+
+bev_alignment:
+  enabled: true
+  transform: "mirror_y"
+  source: "output/route_A_v3_scarf/alignment_selected.json"
+
+people:
+  model: "yolo11n-seg.pt"
+  fallback_model: "yolov8n-seg.pt"
+  tracker: "botsort.yaml"
+  fallback_tracker: "bytetrack.yaml"
+  conf_thres: 0.35
+  iou_thres: 0.50
+  imgsz: 960
+  device: "auto"
+  person_class_id: 0
+  max_lost_frames: 15
+  mask_bottom_percent: 0.05
+  min_mask_area_px: 80
+
+filter:
+  ema_alpha: 0.35
+  max_human_speed_mps: 3.0
+  reject_large_jumps: true
+
+bev:
+  trail_length: 80
+  grid_step_m: 0.5
+  draw_camera_trail: true
+  draw_people_trails: false
+
+render:
+  save_3d_pointcloud: true
+  save_topdown_3d_view: true
+  paper_style:
+    background: [245, 245, 245]
+    occupied: [20, 20, 20]
+    free: [255, 255, 255]
+    unknown: [220, 220, 220]
+    camera_traj: [255, 120, 0]
+    people: [0, 120, 255]
+  nav_binary:
+    free: [255, 255, 255]
+    not_free: [0, 0, 0]
+  tricolor:
+    occupied: [0, 0, 0]
+    free: [255, 255, 255]
+    unknown: [160, 160, 160]

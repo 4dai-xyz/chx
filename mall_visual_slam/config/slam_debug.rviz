@@ -1,0 +1,41 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+  - Class: rviz_common/Views
+    Name: Views
+Visualization Manager:
+  Global Options:
+    Fixed Frame: world
+    Frame Rate: 30
+  Displays:
+    - Class: rviz_default_plugins/Image
+      Name: Camera Image
+      Topic: /camera/image_raw
+      Enabled: true
+    - Class: rviz_default_plugins/Image
+      Name: SLAM Debug
+      Topic: /slam/debug_image
+      Enabled: true
+    - Class: rviz_default_plugins/PointCloud2
+      Name: Map Points
+      Topic: /slam/map_points
+      Enabled: true
+      Style: Points
+      Size (m): 0.02
+    - Class: rviz_default_plugins/Odometry
+      Name: Camera Odom
+      Topic: /slam/odom
+      Enabled: true
+      Keep: 1000
+      Shape: Arrow
+      Shaft Length: 0.2
+      Shaft Diameter: 0.05
+      Head Length: 0.1
+      Head Diameter: 0.1
+  Views:
+    - Class: rviz_default_plugins/Orbit
+      Name: Orbit
+      Target Frame: world
+      Distance: 10
+      Pitch: 1.57
+      Yaw: 0

@@ -1,0 +1,83 @@
+input:
+  video: "resources/input_video.mp4"
+  calib: "config/KannalaBrandt8_1280x720.yaml"
+  pose_tum: "output/dpvo/trajectory_tum.txt"
+  primary_pointcloud: "project code/DPVO/mall_dpvo.ply"
+  optional_vggt_pointcloud: "output/vggt_aligned_full_run/aligned_full/aligned_full_scene.ply"
+  optional_kv_traj: "output/kv_track3r_repro/traj.npy"
+  optional_kv_pcd: "output/kv_track3r_repro/pcd.npy"
+
+pose:
+  source: "dpvo"
+  timestamp_unit: "dpvo_tick"
+  dpvo_stride: 2
+  scale: 1.0
+  flatten: true
+  flatten_mode: "constant"    # or "lpf"
+  flatten_lpf_cutoff_hz: 0.3
+
+pointcloud:
+  source: "dpvo"              # dpvo | vggt | kv_aligned
+  max_points: 500000
+  outlier_percentile: [5.0, 95.0]
+  trajectory_proximity_max_ratio: 10.0     # 保留距离 <= max_ratio * traj_extent 的点
+  trajectory_proximity_min_radius: 1.0
+
+ground:
+  method: "auto"              # auto | ransac | bottom_pca | camera_fallback
+  axis_hint: "y"              # 相机初始 +Y (先验)
+  ransac_distance_threshold: 0.015
+  ransac_iterations: 2000
+  bottom_percentile: 20.0
+  normal_max_angle_deg: 35.0
+  fallback_mode: "camera"
+  fallback_camera_height: 0.1
+  fallback_camera_pitch_deg: 15.0
+
+static_map:
+  resolution_unit_per_px: 0.004
+  width_px: 1200
+  height_px: 1200
+  auto_origin: true                        # 自动把 origin 设成轨迹 BEV 中心
+  origin_world: [0.0, 1.5]
+  bev_axes: ["x", "z"]
+  auto_height: true                        # 自动按 h_align 分布决定障碍带
+  obstacle_height_range: [0.02, 0.35]      # auto_height=false 时的手动值
+  count_thresh: 5
+  dilate_kernel: 3
+  gaussian_blur_sigma: 0.0
+  free_corridor_radius_px: 12
+  colors:
+    unknown: [35, 35, 35]
+    free: [205, 205, 205]
+    occupied: [70, 70, 70]
+
+people:
+  model: "yolo11n-seg.pt"
+  fallback_model: "yolov8n-seg.pt"
+  tracker: "botsort.yaml"
+  fallback_tracker: "bytetrack.yaml"
+  conf_thres: 0.35
+  iou_thres: 0.50
+  imgsz: 960
+  device: "auto"
+  person_class_id: 0
+  max_lost_frames: 15
+  mask_bottom_percent: 0.05
+  min_mask_area_px: 80
+
+filter:
+  ema_alpha: 0.35
+  max_human_speed_mps: 3.0
+  reject_large_jumps: true
+
+bev:
+  trail_length: 80
+  grid_step_m: 0.5
+  draw_camera_trail: true
+  draw_people_trails: false
+
+output:
+  dir: "output/route_A"
+  live_window: false
+  save_clean_video: true
