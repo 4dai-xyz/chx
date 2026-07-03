@@ -49,7 +49,6 @@ build / install / log 目录
 ```text
 indoor-navigation-go2/
 ├── README.md
-├── docs/
 ├── mall_visual_slam/
 │   ├── config/
 │   ├── launch/
