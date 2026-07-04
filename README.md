@@ -10,6 +10,37 @@
 
 本项目是一个工程集成仓库，不直接内置 DPVO、ORB-SLAM3、KV-Track3r、VGGT、ScaRF-SLAM、Unitree SDK、Isaac Lab 等第三方官方源码和模型权重。相关第三方项目应通过官方仓库、公司镜像、Git submodule 或单独安装脚本获取。
 
+
+## 第三方源码与上游项目地址
+
+本仓库只保留自研 wrapper、配置、脚本、接口和文档，不直接上传第三方官方源码大包。需要复现实验或部署环境时，请从以下上游地址、公司内部 fork 或公司镜像获取源码。若公司内部已经建立固定 fork，以公司内部 fork 和指定 commit hash 为准。
+
+### 视觉定位、三维重建与地图相关
+
+| 模块 | 用途 | 上游地址 |
+|---|---|---|
+| DPVO | 单目视觉里程计主定位前端 | https://github.com/princeton-vl/DPVO |
+| ORB-SLAM3 | 传统特征法 SLAM 对照与 ROS2 wrapper 调用对象 | https://github.com/UZ-SLAMLab/ORB_SLAM3 |
+| Pangolin | ORB-SLAM3 / DPVO viewer 相关依赖 | https://github.com/stevenlovegrove/Pangolin |
+| VGGT | feed-forward 视觉几何、点云/深度/相机估计实验 | https://github.com/facebookresearch/vggt |
+| Depth Anything V2 | 单目深度估计，Route A 稠密点云/栅格地图实验 | https://github.com/DepthAnything/Depth-Anything-V2 |
+| ZoeDepth | 单目伪公制深度备用路线 | https://github.com/isl-org/ZoeDepth |
+| ScaRF-SLAM | 稠密/半稠密重建与全局结构对照路线 | https://github.com/ori-drs/ScaRF-SLAM |
+| KV-Tracker / KV-Track3r | Transformer pose tracking 对照路线 | https://github.com/Marwan99/kv_tracker |
+| SAM 2 | 语义/实例分割与动态区域 mask 参考 | https://github.com/facebookresearch/sam2 |
+| Ultralytics YOLO | 行人检测与跟踪基础接口 | https://github.com/ultralytics/ultralytics |
+| VINS-Fusion | VIO / 多传感器融合方法参考 | https://github.com/HKUST-Aerial-Robotics/VINS-Fusion |
+
+### Go2 控制、仿真与强化学习相关
+
+| 模块 | 用途 | 上游地址 |
+|---|---|---|
+| Unitree SDK2 | Go2 官方底层通信 SDK | https://github.com/unitreerobotics/unitree_sdk2 |
+| Unitree SDK2 Python | Go2 Python 控制接口 | https://github.com/unitreerobotics/unitree_sdk2_python |
+| Unitree ROS2 | Go2 ROS2 通信与消息接口 | https://github.com/unitreerobotics/unitree_ros2 |
+| Unitree MuJoCo | Go2 MuJoCo 仿真参考 | https://github.com/unitreerobotics/unitree_mujoco |
+| MuJoCo | 物理仿真引擎 | https://github.com/google-deepmind/mujoco |
+| Isaac Lab | Isaac Sim / Isaac Lab 强化学习与仿真框架 | https://github.com/isaac-sim/IsaacLab |
 ---
 
 ## 1. 仓库定位
